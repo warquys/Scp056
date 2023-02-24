@@ -15,7 +15,6 @@ public class Scp056Plugin : ReloadablePlugin<Scp056Config, Scp056Translation>
 
     public override void EnablePlugin()
     {
-        EventHandler = Synapse.GetAndBind<EventHandler>();
         Logger.Info("Loaded SCP-056 Plugin");
     }
 }
