@@ -1,6 +1,8 @@
 ﻿using MEC;
 using Neuron.Core.Events;
+using Neuron.Core.Meta;
 using PlayerRoles;
+using Synapse3.SynapseModule;
 using Synapse3.SynapseModule.Events;
 using Synapse3.SynapseModule.Patching.Patches;
 using Synapse3.SynapseModule.Player;
@@ -9,6 +11,7 @@ using UnityEngine;
 
 namespace Scp056;
 
+[Automatic]
 public class EventHandler : Listener
 {
     private readonly Scp056Plugin _plugin;
@@ -19,12 +22,14 @@ public class EventHandler : Listener
     {
         _player = player;
         _plugin = plugin;
+        playerEvents.KeyPress.Subscribe(KeyPress);
+        playerEvents.SpeakToPlayer.Subscribe(SpeakToPlayer);
+        roundEvents.FirstSpawn.Subscribe(FirstSpawn);
     }
 
-    [EventHandler]
     public void FirstSpawn(FirstSpawnEvent ev)
     {
-        if (!_plugin.Config.EnableDefaultSpawnBehaviour) return;
+        if (!_plugin.Config.EnableDefaultSpawnBehavior) return;
         if (_player.PlayersAmount < _plugin.Config.RequiredPlayers) return;
         if (Random.Range(1f, 100f) > _plugin.Config.SpawnChance) return;
 
@@ -65,14 +70,23 @@ public class EventHandler : Listener
     private bool IsScpID(uint id) => id is (uint)RoleTypeId.Scp173 or (uint)RoleTypeId.Scp049 or (uint)RoleTypeId.Scp0492
         or (uint)RoleTypeId.Scp079 or (uint)RoleTypeId.Scp096 or (uint)RoleTypeId.Scp106 or (uint)RoleTypeId.Scp939;
 
-    [EventHandler]
-    public void Speak(SpeakEvent ev)
+
+    private void SpeakToPlayer(SpeakToPlayerEvent ev)
     {
-        if (ev.Player.RoleID == 56)
-            ev.Channel = VoiceChat.VoiceChatChannel.ScpChat;
+        if (ev.Receiver.RoleID == 56 && ev.Player.TeamID == (uint)Team.SCPs)
+        {
+            ev.Channel = VoiceChat.VoiceChatChannel.RoundSummary;
+            ev.Allow = true;
+        }
+        else if (ev.Player.RoleID == 56)
+        { 
+            ev.Channel = ev.Receiver.TeamID == (uint)Team.SCPs 
+                    ? VoiceChat.VoiceChatChannel.ScpChat
+                    : VoiceChat.VoiceChatChannel.Proximity;
+            ev.Allow = true;
+        }
     }
 
-    [EventHandler]
     public void KeyPress(KeyPressEvent ev)
     {
         if (ev.Player.RoleID != 56) return;

@@ -31,10 +31,14 @@ public class Scp056PlayerScript : SynapseAbstractRole
 
     protected override IAbstractRoleConfig GetConfig() => _plugin.Config.Scp056Configuration;
 
+
+
     protected override void OnSpawn(IAbstractRoleConfig config)
     {
         Player.SendHint(_plugin.Translation.Get(Player).Spawn.Replace("\\n", "\n"), 20);
-        Player.FakeRoleManager.VisibleRole = new RoleInfo(_plugin.Config.Scp056Configuration.VisibleRole, null, null);
+        Player.FakeRoleManager.VisibleRole = new RoleInfo(_plugin.Config.Scp056Configuration.VisibleRole, Player);
+        Player.FakeRoleManager.VisibleRoleCondition.Add((p) => p.TeamID == (uint)Team.SCPs,
+            new RoleInfo(_plugin.Config.Scp056Configuration.VisibleRoleForScp, Player));
         RemoveCustomDisplay();
     }
 
@@ -43,14 +47,14 @@ public class Scp056PlayerScript : SynapseAbstractRole
         if (reason is DeSpawnReason.Death or DeSpawnReason.Leave)
             _cassie.AnnounceScpDeath("056", CassieSettings.DisplayText, CassieSettings.Glitched, CassieSettings.Noise);
 
-        Player.FakeRoleManager.VisibleRole = new RoleInfo(RoleTypeId.None, null, null);
+        Player.FakeRoleManager.VisibleRole = new RoleInfo(RoleTypeId.None, Player);
     }
 
     public void SwapRole(RoleTypeId role)
     {
         if (!_plugin.Config.AllowedRoles.Contains(role)) return;
         
-        Player.FakeRoleManager.VisibleRole = new RoleInfo(role, null, null);
+        Player.FakeRoleManager.VisibleRole = new RoleInfo(role, Player);
         Player.SendHint(_plugin.Translation.ChangedRole.Replace("%role%", role.ToString()));
     }
 }

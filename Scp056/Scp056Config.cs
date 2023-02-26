@@ -22,8 +22,8 @@ public class Scp056Config : IDocumentSection
         MaxHealth = 200,
         VisibleRole = RoleTypeId.FacilityGuard,
         OwnRole = RoleTypeId.Tutorial,
-        Scale = new SerializedVector3(1,1,1),
         VisibleRoleForScp = RoleTypeId.Scp0492,
+        Scale = new SerializedVector3(1,1,1),
         ArtificialHealth = 0,
         MaxArtificialHealth = 75,
         EscapeRole = 0,
@@ -100,18 +100,18 @@ public class Scp056Config : IDocumentSection
     public bool Ff { get; set; } = false;
 
     [Description("If Disabled the entire Spawn logic will be skipped and all configs below become useless. Use this when you use another Plugin to spawn Roles")]
-    public bool EnableDefaultSpawnBehaviour { get; set; } = true;
+    public bool EnableDefaultSpawnBehavior { get; set; } = true;
 
-    [Description("The Chanche of which Scp056 spawns")]
+    [Description("The chance of which Scp056 spawns")]
     public float SpawnChance { get; set; } = 50;
 
-    [Description("The Amount of Players Required in order to have the Chanche that 056 can spawn")]
+    [Description("The Amount of Players Required in order to have the chance that 056 can spawn")]
     public int RequiredPlayers { get; set; } = 3;
 
     [Description("If Enabled a Scp will become Scp056.If Disabled a Human will become Scp056")]
     public bool ReplaceScp { get; set; } = false;
 
-    [Description("Prevnts the scenario that only 056 and 079 spawns together")]
+    [Description("Prevents the scenario that only 056 and 079 spawns together")]
     public bool Replace079 { get; set; } = true;
     
     public class Scp056RoleConfiguration : IAbstractRoleConfig
@@ -127,12 +127,20 @@ public class Scp056Config : IDocumentSection
 
         [Description("The Role SCP-056 becomes when he Escapes")]
         public uint EscapeRole { get; set; }
+       
+        [Description("The Health of SCP-056")]
         public float Health { get; set; }
         public float MaxHealth { get; set; }
         public float ArtificialHealth { get; set; }
         public float MaxArtificialHealth { get; set; }
+
+        [Description("The possible spawn points of SCP-056")]
         public RoomPoint[] PossibleSpawns { get; set; }
+        
+        [Description("The size of SCP-056, keep it to 1 1 1 to not be sus")]
         public SerializedVector3 Scale { get; set; }
+
+        [Description("The possible inventory of SCP-056")]
         public SerializedPlayerInventory[] PossibleInventories { get; set; }
 
         [Description("This value can't be changed")]
